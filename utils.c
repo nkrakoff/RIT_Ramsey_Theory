@@ -57,8 +57,30 @@ uint8_t* convert_to_Matrix(char* g6) {
 
 }
 
+int shareCount(int i, int j, int n, uint8_t* M){
+	int count = 0;
+	for(int k = 0; k < n; k++){
+		if(get_M(i,k,n,M) + get_M(j,k,n,M) == 2){
+			count = count + 1;
+		}
+	}
+	return count;
+}
 
-
+int j4Free(int n, uint8_t* M) 
+{
+	for (int i = 0; i < n; i++){
+		for (int j = i+1; j < n; j++){
+			if(get_M(i,j,n,M) == 1){
+				int count = shareCount(i,j,n,M);
+				if(count >= 2){
+					return 0;
+				}
+			}
+		}
+	}
+	return 1;
+}
 
 int main( int argc, const char* argv[] )
 {
@@ -68,14 +90,15 @@ int main( int argc, const char* argv[] )
 		printf("%s %s",argv[i], "\n");
 	}
 	char* test  = (char*) malloc(sizeof(char)*3);
-	*test = 'D';
-	*(test+1) = 'h';
-	*(test+2) = 'c';
+	*test = 'C';
+	*(test+1) = 'v';
+	*(test+2) = '?';
 	//printf("%d\n", get_correct_g6_index(9,test+1));
 	int num_v = get_num_vertices(test);
 	uint8_t* M = convert_to_Matrix(test);
 	print_matrix(M, num_v);
 	free(M);
 	free(test);
+	printf("%d",j4Free(num_v, M));
 }
 
