@@ -144,7 +144,6 @@ uint8_t*  Induced_subgraph(int n, int* verts, uint8_t* M, int num_v) {
 		for (int i = 0; i <n; i++) {
 			for (int j = 0; j<n; j++) {
 				uint8_t b = get_M(*(verts + i), *(verts +j), num_v, M);
-				printf("%d\n",b);
 				set_M(i,j,n,M_sub, b);
 			}
 		}
@@ -204,45 +203,51 @@ int g6_check_jk_free(char* g6, int k) {
 	//checks to see if the graph represented in g6 format is J_k free
 	int num_v = get_num_vertices(g6);
 	uint8_t* M = convert_to_Matrix(g6);
-	print_matrix(M, num_v);
 	int result = jkFree(num_v, M, k);
 	free(M);
-	printf("%d\n", result);
 	return result;
 }
 
+
+void filter(int k, const char* in_file, const char* out_file) {
+	//filters through in_file and writes to out_file(or prints) all graphs who are jk_free
+	FILE* ifile = open_file_r(in_file);
+	char* g6 = malloc(sizeof(char)*255);
+	if (out_file!=NULL) {
+		FILE* ofile = open_file_w(out_file);
+		while (get_next_line(ifile, g6)==1) {
+			if (g6_check_jk_free(g6, k)==1) {
+				write_next_line(ofile,g6);
+			}
+		}
+		close_file(ofile);
+	} else {
+		while (get_next_line(ifile, g6)==1) {
+			if (g6_check_jk_free(g6, k)==1) {
+				printf("%s",g6);
+			}
+		}
+	}
+	close_file(ifile);
+	free(g6);
+	
+}
 
 
 
 int main( int argc, const char* argv[] )
 {
-	/*
-	FILE* ifile = open_file_r(argv[1]);
-	char* g6 = malloc(sizeof(char)*255);
-
-
-	
-	if (argc > 2) {
-		FILE* ofile = open_file_w(argv[2]);
-		printf("hello\n");
-		while (get_next_line(ifile, g6)==1) {
-			write_next_line(ofile,g6);
-		}
-		close_file(ofile);
+	if (argc<3) {
+		return 0;
+	}
+	const char* k_char = argv[1];
+	int k = atoi(k_char);
+	if (argc==3) {
+		filter(k,argv[2], NULL);
+	} else {
+		filter(k, argv[2], argv[3]);
 	}
 	
-	*/
 	
-	char * g6 = malloc(sizeof(char)*3);
-	*g6 = 'D';
-	*(g6+1) = 'h';
-	*(g6 +2) = 'c';
-	g6_check_jk_free(g6, 5);
-	
-	
-	
-	//no other code past this point
-	//close_file(ifile);	
-	free(g6);
 }
 
