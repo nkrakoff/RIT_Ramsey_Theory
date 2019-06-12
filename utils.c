@@ -97,6 +97,7 @@ uint8_t* convert_to_Matrix(char* g6) {
 }
 
 int shareCount(int i, int j, int n, uint8_t* M){
+	//counts the number of shared neighbors of i and j
 	int count = 0;
 	for(int k = 0; k < n; k++){
 		if(get_M(i,k,n,M) + get_M(j,k,n,M) == 2){
@@ -106,8 +107,8 @@ int shareCount(int i, int j, int n, uint8_t* M){
 	return count;
 }
 
-int j4Free(int n, uint8_t* M) 
-{
+int j4Free(int n, uint8_t* M) {\
+	//checks to see if a graph M on n vertices is J_4 free
 	for (int i = 0; i < n; i++){
 		for (int j = i+1; j < n; j++){
 			if(get_M(i,j,n,M) == 1){
@@ -121,6 +122,21 @@ int j4Free(int n, uint8_t* M)
 	return 1;
 }
 
+int j3Free(int num_v, uint8_t* M) {
+	//checks to see if a graph M on n vertices is J_3 free
+	for (int i = 0; i < num_v; i++) {
+		int edge_count = 0;
+		  for (int j = 0; j <num_v; j++) {
+			  if (get_M(i,j,num_v, M)==1) {
+				  edge_count++;
+				  if (edge_count >= 2) {
+					  return 0;
+				  }
+			  }
+		  }
+	}
+	return 1;
+}
 
 uint8_t*  Induced_subgraph(int n, int* verts, uint8_t* M, int num_v) {
 	//returns the induced graph of M with num_v vertices with the n vertices specified in verts
@@ -135,9 +151,72 @@ uint8_t*  Induced_subgraph(int n, int* verts, uint8_t* M, int num_v) {
 		return M_sub;
 }
 
+
+int find_shared(int i, int j, uint8_t* M, int num_v, int* verts) {
+	//finds the shared neighbors of i and j and puts them into verts and returns the size of verts
+	int share_count=0;
+	for (int k = 0; k < num_v; k++) {
+		if (get_M(i, k, num_v, M)==1) {
+			if (get_M(j, k, num_v, M)==1) {
+				*(verts + share_count) = k;
+				share_count++;
+			}
+		}
+	}
+	return share_count;
+}
+
+int jkFree(int num_v, uint8_t* M, int k) {
+	//checks to see if the graph M on num_v vertices is J_k free
+	if (num_v < k) {
+		return 1;
+	}
+	if (k==3) {
+		return j3Free(num_v, M);
+	}
+	if (k==4) {
+		return j4Free(num_v, M);
+	}
+	
+	
+	int *verts = (int *) malloc(sizeof(int)*num_v);
+	int k_free = 1;
+	for (int i = 0; i < num_v; i++) {
+		for (int j = 0; j < num_v; j++) {
+			if (get_M(i,j,num_v,M)==1) {
+				int share_count = find_shared(i,j,M,num_v,verts);
+				uint8_t* M_sub = Induced_subgraph(share_count, verts, M, num_v);
+				k_free = jkFree(share_count, M_sub, k-2);
+				free(M_sub);
+				if (k_free==0) {
+					free(verts);
+					return 0;
+				}
+			}
+		}
+	}
+	free(verts);
+	return 1;
+}
+
+
+int g6_check_jk_free(char* g6, int k) {
+	//checks to see if the graph represented in g6 format is J_k free
+	int num_v = get_num_vertices(g6);
+	uint8_t* M = convert_to_Matrix(g6);
+	print_matrix(M, num_v);
+	int result = jkFree(num_v, M, k);
+	free(M);
+	printf("%d\n", result);
+	return result;
+}
+
+
+
+
 int main( int argc, const char* argv[] )
 {
-	
+	/*
 	FILE* ifile = open_file_r(argv[1]);
 	char* g6 = malloc(sizeof(char)*255);
 
@@ -152,30 +231,18 @@ int main( int argc, const char* argv[] )
 		close_file(ofile);
 	}
 	
-
-	printf("%s\n",g6);
-	int num_v = get_num_vertices(g6);
-	uint8_t* M = convert_to_Matrix(g6);
-	print_matrix(M, num_v);
-	printf("%d",j4Free(num_v, M));
+	*/
 	
-	
-	
-	int * vert = malloc(sizeof(int)*3);
-	*vert = 0;
-	*(vert+1) = 2;
-	*(vert +2) = 3;
-	uint8_t* M_sub = Induced_subgraph(3, vert, M, num_v);
-	printf("\n");
-	print_matrix(M_sub, 3);
+	char * g6 = malloc(sizeof(char)*3);
+	*g6 = 'D';
+	*(g6+1) = 'h';
+	*(g6 +2) = 'c';
+	g6_check_jk_free(g6, 5);
 	
 	
 	
 	//no other code past this point
-	//close_file(ifile);
-	free(M_sub);
-	free(vert);
-	free(M);
+	//close_file(ifile);	
 	free(g6);
 }
 
