@@ -121,13 +121,25 @@ int j4Free(int n, uint8_t* M)
 	return 1;
 }
 
+
+uint8_t*  Induced_subgraph(int n, int* verts, uint8_t* M, int num_v) {
+	//returns the induced graph of M with num_v vertices with the n vertices specified in verts
+		uint8_t* M_sub = (uint8_t*) malloc(sizeof(uint8_t)*n*n);
+		for (int i = 0; i <n; i++) {
+			for (int j = 0; j<n; j++) {
+				uint8_t b = get_M(*(verts + i), *(verts +j), num_v, M);
+				printf("%d\n",b);
+				set_M(i,j,n,M_sub, b);
+			}
+		}
+		return M_sub;
+}
+
 int main( int argc, const char* argv[] )
 {
+	
 	FILE* ifile = open_file_r(argv[1]);
 	char* g6 = malloc(sizeof(char)*255);
-	get_next_line(ifile, g6);
-
-
 
 
 	
@@ -139,9 +151,9 @@ int main( int argc, const char* argv[] )
 		}
 		close_file(ofile);
 	}
+	
 
-
-	printf(g6);
+	printf("%s\n",g6);
 	int num_v = get_num_vertices(g6);
 	uint8_t* M = convert_to_Matrix(g6);
 	print_matrix(M, num_v);
@@ -149,8 +161,20 @@ int main( int argc, const char* argv[] )
 	
 	
 	
+	int * vert = malloc(sizeof(int)*3);
+	*vert = 0;
+	*(vert+1) = 2;
+	*(vert +2) = 3;
+	uint8_t* M_sub = Induced_subgraph(3, vert, M, num_v);
+	printf("\n");
+	print_matrix(M_sub, 3);
+	
+	
+	
 	//no other code past this point
-	close_file(ifile);
+	//close_file(ifile);
+	free(M_sub);
+	free(vert);
 	free(M);
 	free(g6);
 }
