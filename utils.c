@@ -38,13 +38,26 @@ void write_next_line(FILE* ofile, char* g6) {
 
 void set_M(int i,int j,int n, uint8_t* M, uint8_t b){
 	//sets the i,jth entry of an adjacency matrix M with n vertices as b  
-	*(M + i*n + j) = b;
+	*(M + i*64 + j) = b;
 }
 
 uint8_t get_M(int i,int j,int n, uint8_t* M) {
 	//gets the i,jth entry of an adjacency matrix M with n vertices
-	return *(M + i*n + j);
+	return *(M + i*64 + j);
 }
+
+uint8_t* add_vertex(uint8_t* M, int num_v, uint8_t* v) {
+	//addes a vertex with connections to other vertices, represented by the array v, to the matrix M with num_v vertices
+	M = (uint8_t*) realloc(M, (num_v+1)*64);
+	for (int i = 0; i<num_v; i++) {
+		set_M(i,num_v,num_v+1,M, *(v+i));
+		set_M(num_v,i,num_v+1,M, *(v+i));
+	}
+	set_M(num_v,num_v,num_v+1,M,0);
+	return M;
+}
+
+
 
 uint8_t get_correct_g6_index(int n, char* g6) {
 	//given a g6 char string and an index n, gets the correct bit of the g6 binary string
@@ -80,7 +93,7 @@ uint8_t* convert_to_Matrix(char* g6) {
 	//converts a g6 formatted graph to a matrix
 	int num_v = get_num_vertices(g6);
 	g6 = g6 + 1;
-	uint8_t	* M = (uint8_t*) calloc(num_v*num_v,1);
+	uint8_t	* M = (uint8_t*) calloc(num_v*64,1);
 	for (int i = 0; i<num_v;i++){
 		for(int j = i; j<num_v; j++) {
 			int indx = 0;
@@ -94,6 +107,31 @@ uint8_t* convert_to_Matrix(char* g6) {
 	}	
 	return M;
 
+}
+
+char * convert_to_g6(uint8_t* M, int num_v) {
+	//converts the adjacency matrix M with num_v vertices into the G6 format
+	char * g6 = (char *) malloc(sizeof(char)*255);
+	*g6 =  (char) num_v + 63;
+	int bit_place = 0;
+	int g6_index = 1;
+	uint8_t curr = 0;
+	for (int j = 0; j<num_v; j++) {
+		for (int i = 0; i<j; i++) {
+			 uint8_t b = get_M(i,j,num_v,M);
+			 curr = curr | (b<<(5-bit_place)); 
+			bit_place = (bit_place+1)%6; 
+			if (bit_place==0) {
+				*(g6+g6_index) = (char) curr+63;
+				g6_index++;
+				curr = 0;
+			}
+		}
+	}  
+	*(g6+g6_index) = (char) curr + 63;
+	*(g6+g6_index+1) = '\n';
+	return g6;
+	
 }
 
 int shareCount(int i, int j, int n, uint8_t* M){
@@ -261,9 +299,26 @@ void filter(int k, int k_0, const char* in_file, const char* out_file) {
 
 
 
+
+
 int main( int argc, const char* argv[] )
 {	
 	
+	
+	
+	char* test = "HEhbtjK";
+	uint8_t* M = convert_to_Matrix(test);
+	int num_v = get_num_vertices(test);
+	print_matrix(M, get_num_vertices(test));
+	uint8_t* v = (uint8_t*) calloc(num_v,1);
+	char * g6 = convert_to_g6(M, num_v);
+	printf(g6);
+	//M = add_vertex(M, num_v, v);
+	//print_matrix(M,num_v+1);
+	free(g6);
+	free(v);
+	free(M);
+	/*
 	if (argc<3) {
 		return 0;
 	}
@@ -291,6 +346,7 @@ int main( int argc, const char* argv[] )
 		filter(k,k_0, argv[2], argv[3]);
 	}
 	
+	*/
 	
 }
 
