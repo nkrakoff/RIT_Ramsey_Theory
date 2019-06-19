@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 
 
@@ -48,13 +49,19 @@ uint8_t get_M(int i,int j,int n, uint8_t* M) {
 
 uint8_t* add_vertex(uint8_t* M, int num_v, uint8_t* v) {
 	//addes a vertex with connections to other vertices, represented by the array v, to the matrix M with num_v vertices
-	M = (uint8_t*) realloc(M, (num_v+1)*64);
+	uint8_t* M_new = (uint8_t*) malloc((num_v+1)*64);
+	for (int i = 0; i<num_v;i++) {
+		for (int j = 0; j<num_v; j++) {
+			set_M(i,j,num_v+1,M_new,get_M(i,j,num_v,M));
+		}
+	}
+	
 	for (int i = 0; i<num_v; i++) {
-		set_M(i,num_v,num_v+1,M, *(v+i));
-		set_M(num_v,i,num_v+1,M, *(v+i));
+		set_M(i,num_v,num_v+1,M_new, *(v+i));
+		set_M(num_v,i,num_v+1,M_new, *(v+i));
 	}
 	set_M(num_v,num_v,num_v+1,M,0);
-	return M;
+	return M_new;
 }
 
 
@@ -267,6 +274,11 @@ int g6_check_jk_free(char* g6, int k, int k_0) {
 
 
 
+void adder(const char* in_file, const char* out_file) {
+	
+}
+
+
 
 
 void filter(int k, int k_0, const char* in_file, const char* out_file) {
@@ -277,11 +289,13 @@ void filter(int k, int k_0, const char* in_file, const char* out_file) {
 	if (out_file!=NULL) {
 		FILE* ofile = open_file_w(out_file);
 		while (get_next_line(ifile, g6)==1) {
-			if (g6_check_jk_free(g6, k,k_0)==1) {
-				write_next_line(ofile,g6);
-				total++;
+				if (g6_check_jk_free(g6, k,k_0)==1) {
+					write_next_line(ofile,g6);
+					total++;
+				}
+				
 			}
-		}
+			
 		close_file(ofile);
 	} else {
 		while (get_next_line(ifile, g6)==1) {
@@ -305,20 +319,50 @@ int main( int argc, const char* argv[] )
 {	
 	
 	
+	/*
+	uint8_t* M = convert_to_Matrix(g6);
+			int num_v = get_num_vertices(g6);
+			uint8_t* v = (uint8_t*) calloc(num_v,1);
+			
+			for (int i = 0; i<pow(2,num_v); i++) {
+				for (int j = 0; j<num_v; j++) {
+					*(v+i) = i>>j & 0x01;
+				}
+				uint8_t* M_new = add_vertex(M,num_v,v);
+				char* next = convert_to_g6(M, num_v);
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	char* test = "HEhbtjK";
 	uint8_t* M = convert_to_Matrix(test);
 	int num_v = get_num_vertices(test);
-	print_matrix(M, get_num_vertices(test));
-	uint8_t* v = (uint8_t*) calloc(num_v,1);
-	char * g6 = convert_to_g6(M, num_v);
-	printf(g6);
-	//M = add_vertex(M, num_v, v);
-	//print_matrix(M,num_v+1);
-	free(g6);
+	num_v = 5;
+	//print_matrix(M, get_num_vertices(test));
+	uint8_t* v = (uint8_t*) malloc(num_v+2);
+			
+	for (int i = 0; i<pow(2,num_v); i++) {
+		for (int j = 0; j<num_v; j++) {
+			*(v+i) = i>>j & 0x01;
+			printf("%d", *(v+i));
+		}
+		printf("\n");
+	}
+	//char * g6 = convert_to_g6(M, num_v);
+	//printf(g6);
+	//uint8_t* M_new = add_vertex(M, num_v, v);
+	//print_matrix(M_new,num_v+1);
+	//free(g6);
 	free(v);
 	free(M);
-	/*
+	//free(M_new);
+	*/
+	
 	if (argc<3) {
 		return 0;
 	}
@@ -345,8 +389,6 @@ int main( int argc, const char* argv[] )
 	} else {
 		filter(k,k_0, argv[2], argv[3]);
 	}
-	
-	*/
 	
 }
 
