@@ -274,8 +274,34 @@ int g6_check_jk_free(char* g6, int k, int k_0) {
 
 
 
-void adder(const char* in_file, const char* out_file) {
-	
+void exhaustive_adder(const char* in_file, const char* out_file) {
+	FILE* ifile = open_file_r(in_file);
+	char* g6 = malloc(sizeof(char)*255);
+	FILE* ofile = open_file_w(out_file);
+	uint8_t* v;
+		while (get_next_line(ifile, g6)==1) {
+			uint8_t* M = convert_to_Matrix(g6);
+			int num_v = get_num_vertices(g6);
+			v = (uint8_t*) calloc(num_v,1);
+			for (int i = 0; i<pow(2,num_v); i++) {
+				for (int j = 0; j<num_v; j++) {
+					*(v+j) = i>>j & 0x01;
+				}
+				for (int j = 0; j<num_v; j++) {
+					printf("%d",*(v+j));
+				}
+				printf("\n");
+				uint8_t* M_new = add_vertex(M,num_v,v);
+				print_matrix(M_new, num_v+1);
+				char* g6_new = convert_to_g6(M_new, num_v+1);
+				write_next_line(ofile,g6_new);
+				free(M_new);
+			}
+			free(M);
+		}
+	free(v);
+	close_file(ofile);
+	close_file(ifile);
 }
 
 
@@ -319,54 +345,61 @@ int main( int argc, const char* argv[] )
 {	
 	
 	
+	
+	
 	/*
-	uint8_t* M = convert_to_Matrix(g6);
-			int num_v = get_num_vertices(g6);
-			uint8_t* v = (uint8_t*) calloc(num_v,1);
-			
-			for (int i = 0; i<pow(2,num_v); i++) {
-				for (int j = 0; j<num_v; j++) {
-					*(v+i) = i>>j & 0x01;
-				}
-				uint8_t* M_new = add_vertex(M,num_v,v);
-				char* next = convert_to_g6(M, num_v);
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	char* test = "HEhbtjK";
+	char* test = "FEh_?";
 	uint8_t* M = convert_to_Matrix(test);
 	int num_v = get_num_vertices(test);
+	print_matrix(M, num_v);
 	num_v = 5;
 	//print_matrix(M, get_num_vertices(test));
-	uint8_t* v = (uint8_t*) malloc(num_v+2);
 			
-	for (int i = 0; i<pow(2,num_v); i++) {
-		for (int j = 0; j<num_v; j++) {
-			*(v+i) = i>>j & 0x01;
-			printf("%d", *(v+i));
-		}
-		printf("\n");
-	}
 	//char * g6 = convert_to_g6(M, num_v);
 	//printf(g6);
 	//uint8_t* M_new = add_vertex(M, num_v, v);
 	//print_matrix(M_new,num_v+1);
 	//free(g6);
-	free(v);
 	free(M);
 	//free(M_new);
+	
 	*/
+	
 	
 	if (argc<3) {
 		return 0;
 	}
 	const char* k_char = argv[1];
+	if (*k_char=='F') {
+		k_char++;
+		int count = 0;
+		while (*(k_char + count) != 'C' && *(k_char + count) != '\0') {
+			count++;
+		}
+	
+		int k_0=0;
+		if (*(k_char + count)!='\0') {
+			k_0 = atoi(k_char + count+1);
+		} else {
+			k_0 = -1;
+		}
+		int k = atoi(k_char);
+		if (k==0) {
+			k=-1;
+		}
+		printf("%d\n%d\n", k, k_0);
+	
+		if (argc==3) {
+			filter(k,k_0,argv[2], NULL);
+		} else {
+			filter(k,k_0, argv[2], argv[3]);
+		}
+	} else if (*k_char=='A') {
+		if (argc>3) {
+			exhaustive_adder(argv[2],argv[3]);
+		}
+	}
+	/*
 	int count = 0;
 	while (*(k_char + count) != 'C' && *(k_char + count) != '\0') {
 		count++;
@@ -389,6 +422,7 @@ int main( int argc, const char* argv[] )
 	} else {
 		filter(k,k_0, argv[2], argv[3]);
 	}
+	*/
 	
 }
 
