@@ -143,7 +143,6 @@ char * convert_to_g6(uint8_t* M, int num_v) {
 		*(g6+g6_index) = '\n';
 		*(g6+g6_index+2) = '\0';
 	}
-	printf(g6);
 	return g6;
 	
 }
