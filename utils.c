@@ -135,8 +135,15 @@ char * convert_to_g6(uint8_t* M, int num_v) {
 			}
 		}
 	}  
-	*(g6+g6_index) = (char) curr + 63;
-	*(g6+g6_index+1) = '\n';
+	if (bit_place!=0) {
+		*(g6+g6_index) = (char) curr + 63;
+		*(g6+g6_index+1) = '\n';
+		*(g6+g6_index+2) = '\0';
+	} else {
+		*(g6+g6_index) = '\n';
+		*(g6+g6_index+2) = '\0';
+	}
+	printf(g6);
 	return g6;
 	
 }
@@ -278,28 +285,27 @@ void exhaustive_adder(const char* in_file, const char* out_file) {
 	FILE* ifile = open_file_r(in_file);
 	char* g6 = malloc(sizeof(char)*255);
 	FILE* ofile = open_file_w(out_file);
-	uint8_t* v;
+	int verbose = 0;
 		while (get_next_line(ifile, g6)==1) {
 			uint8_t* M = convert_to_Matrix(g6);
 			int num_v = get_num_vertices(g6);
-			v = (uint8_t*) calloc(num_v,1);
+			uint8_t* v = (uint8_t*) calloc(num_v,1);
 			for (int i = 0; i<pow(2,num_v); i++) {
 				for (int j = 0; j<num_v; j++) {
 					*(v+j) = i>>j & 0x01;
 				}
-				for (int j = 0; j<num_v; j++) {
-					printf("%d",*(v+j));
-				}
-				printf("\n");
 				uint8_t* M_new = add_vertex(M,num_v,v);
-				print_matrix(M_new, num_v+1);
 				char* g6_new = convert_to_g6(M_new, num_v+1);
 				write_next_line(ofile,g6_new);
 				free(M_new);
+				free(g6_new);
 			}
+			verbose++;
+			printf("Added to %d Graphs\n", verbose);
 			free(M);
+			free(v);
 		}
-	free(v);
+	free(g6);
 	close_file(ofile);
 	close_file(ifile);
 }
@@ -311,16 +317,23 @@ void filter(int k, int k_0, const char* in_file, const char* out_file) {
 	//filters through in_file and writes to out_file(or prints) all graphs who are jk_free and J_k_0 free in the compliment
 	FILE* ifile = open_file_r(in_file);
 	char* g6 = malloc(sizeof(char)*255);
+	int verbose = 0;
 	int total = 0;
 	if (out_file!=NULL) {
 		FILE* ofile = open_file_w(out_file);
 		while (get_next_line(ifile, g6)==1) {
-				if (g6_check_jk_free(g6, k,k_0)==1) {
-					write_next_line(ofile,g6);
-					total++;
-				}
-				
+			verbose = (verbose + 1) % 1000000;
+			if (verbose==0) {
+				printf("Current Total: %d\n", total);
 			}
+			
+			
+			if (g6_check_jk_free(g6, k,k_0)==1) {
+				write_next_line(ofile,g6);
+				total++;
+			}
+				
+		}
 			
 		close_file(ofile);
 	} else {
@@ -367,6 +380,10 @@ int main( int argc, const char* argv[] )
 	
 	
 	if (argc<3) {
+		char * test = (char *) malloc(4);
+		*test = 00000001;
+		*(test +1) = 'r';
+		printf("%s",test);
 		return 0;
 	}
 	const char* k_char = argv[1];
@@ -399,30 +416,6 @@ int main( int argc, const char* argv[] )
 			exhaustive_adder(argv[2],argv[3]);
 		}
 	}
-	/*
-	int count = 0;
-	while (*(k_char + count) != 'C' && *(k_char + count) != '\0') {
-		count++;
-	}
-	
-	int k_0=0;
-	if (*(k_char + count)!='\0') {
-		k_0 = atoi(k_char + count+1);
-	} else {
-		k_0 = -1;
-	}
-	int k = atoi(k_char);
-	if (k==0) {
-		k=-1;
-	}
-	printf("%d\n%d\n", k, k_0);
-	
-	if (argc==3) {
-		filter(k,k_0,argv[2], NULL);
-	} else {
-		filter(k,k_0, argv[2], argv[3]);
-	}
-	*/
 	
 }
 
