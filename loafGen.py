@@ -67,7 +67,7 @@ def to_g6(num_verticies, matrix):
             g6 = g6 + chr(binaryToDecimal(lump) + 63)
             lump = ""
         count = count + 1
-    return(g6)
+    print (g6)
     
 def binaryToDecimal(n): 
     return int(n,2) 
