@@ -5,6 +5,7 @@
 
 
 
+
 FILE* open_file_r(const char* filename) {
 	//opens a file for reading
 	FILE* ifile = fopen(filename,"r");
@@ -283,7 +284,12 @@ int g6_check_jk_free(char* g6, int k, int k_0) {
 void exhaustive_adder(const char* in_file, const char* out_file) {
 	FILE* ifile = open_file_r(in_file);
 	char* g6 = malloc(sizeof(char)*255);
-	FILE* ofile = open_file_w(out_file);
+	FILE* ofile;
+	if (out_file!=NULL) {
+		ofile = open_file_w(out_file);
+	} else {
+		ofile = stdout;
+	}
 	int verbose = 0;
 		while (get_next_line(ifile, g6)==1) {
 			uint8_t* M = convert_to_Matrix(g6);
@@ -300,7 +306,7 @@ void exhaustive_adder(const char* in_file, const char* out_file) {
 				free(g6_new);
 			}
 			verbose++;
-			printf("Added to %d Graphs\n", verbose);
+			//printf("Added to %d Graphs\n", verbose);
 			free(M);
 			free(v);
 		}
@@ -338,12 +344,11 @@ void filter(int k, int k_0, const char* in_file, const char* out_file) {
 	} else {
 		while (get_next_line(ifile, g6)==1) {
 			if (g6_check_jk_free(g6, k,k_0)==1) {
-				printf("%s",g6);
+				write_next_line(stdout,g6);
 				total++;
 			}
 		}
 	}
-	printf("%d\n",total);
 	close_file(ifile);
 	free(g6);
 	
@@ -379,10 +384,6 @@ int main( int argc, const char* argv[] )
 	
 	
 	if (argc<3) {
-		char * test = (char *) malloc(4);
-		*test = 00000001;
-		*(test +1) = 'r';
-		printf("%s",test);
 		return 0;
 	}
 	const char* k_char = argv[1];
@@ -403,7 +404,7 @@ int main( int argc, const char* argv[] )
 		if (k==0) {
 			k=-1;
 		}
-		printf("%d\n%d\n", k, k_0);
+		
 	
 		if (argc==3) {
 			filter(k,k_0,argv[2], NULL);
@@ -413,6 +414,8 @@ int main( int argc, const char* argv[] )
 	} else if (*k_char=='A') {
 		if (argc>3) {
 			exhaustive_adder(argv[2],argv[3]);
+		} else if (argc==3) {
+			exhaustive_adder(argv[2],NULL);
 		}
 	}
 	
