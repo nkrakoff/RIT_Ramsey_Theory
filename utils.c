@@ -176,6 +176,9 @@ int j4Free(int n, uint8_t* M) {\
 
 int j3Free(int num_v, uint8_t* M) {
 	//checks to see if a graph M on n vertices is J_3 free
+	if (num_v<3) {
+		return 1;
+	}
 	for (int i = 0; i < num_v; i++) {
 		int edge_count = 0;
 		  for (int j = 0; j <num_v; j++) {
@@ -192,7 +195,7 @@ int j3Free(int num_v, uint8_t* M) {
 
 uint8_t*  Induced_subgraph(int n, int* verts, uint8_t* M, int num_v) {
 	//returns the induced graph of M with num_v vertices with the n vertices specified in verts
-		uint8_t* M_sub = (uint8_t*) malloc(sizeof(uint8_t)*n*n);
+		uint8_t* M_sub = (uint8_t*) malloc(sizeof(uint8_t)*n*n+1);
 		for (int i = 0; i <n; i++) {
 			for (int j = 0; j<n; j++) {
 				uint8_t b = get_M(*(verts + i), *(verts +j), num_v, M);
@@ -296,14 +299,19 @@ void exhaustive_adder(const char* in_file, const char* out_file) {
 			int num_v = get_num_vertices(g6);
 			uint8_t* v = (uint8_t*) calloc(num_v,1);
 			for (int i = 0; i<pow(2,num_v); i++) {
+				int edges = 0;
 				for (int j = 0; j<num_v; j++) {
-					*(v+j) = i>>j & 0x01;
+					*(v+j) = i>>j & 0x01;	
 				}
+				
 				uint8_t* M_new = add_vertex(M,num_v,v);
-				char* g6_new = convert_to_g6(M_new, num_v+1);
-				write_next_line(ofile,g6_new);
+				if (j4Free(num_v+1, M_new)) {
+					char* g6_new = convert_to_g6(M_new, num_v+1);
+					write_next_line(ofile,g6_new);
+					free(g6_new);
+				}
 				free(M_new);
-				free(g6_new);
+				
 			}
 			verbose++;
 			//printf("Added to %d Graphs\n", verbose);
