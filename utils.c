@@ -101,7 +101,7 @@ uint8_t* convert_to_Matrix(char* g6) {
 	//converts a g6 formatted graph to a matrix
 	int num_v = get_num_vertices(g6);
 	g6 = g6 + 1;
-	uint8_t	* M = (uint8_t*) calloc(num_v*64,1);
+	uint8_t	* M = (uint8_t*) calloc(num_v*64,sizeof(uint8_t));
 	for (int i = 0; i<num_v;i++){
 		for(int j = i; j<num_v; j++) {
 			int indx = 0;
@@ -195,7 +195,7 @@ int j3Free(int num_v, uint8_t* M) {
 
 uint8_t*  Induced_subgraph(int n, int* verts, uint8_t* M, int num_v) {
 	//returns the induced graph of M with num_v vertices with the n vertices specified in verts
-		uint8_t* M_sub = (uint8_t*) malloc(sizeof(uint8_t)*n*n+1);
+		uint8_t* M_sub = (uint8_t*) calloc(n*n, sizeof(uint8_t));
 		for (int i = 0; i <n; i++) {
 			for (int j = 0; j<n; j++) {
 				uint8_t b = get_M(*(verts + i), *(verts +j), num_v, M);
@@ -372,24 +372,34 @@ int main( int argc, const char* argv[] )
 	
 	
 	
-	/*
-	char* test = "FEh_?";
-	uint8_t* M = convert_to_Matrix(test);
-	int num_v = get_num_vertices(test);
-	print_matrix(M, num_v);
-	num_v = 5;
-	//print_matrix(M, get_num_vertices(test));
-			
-	//char * g6 = convert_to_g6(M, num_v);
-	//printf(g6);
-	//uint8_t* M_new = add_vertex(M, num_v, v);
-	//print_matrix(M_new,num_v+1);
-	//free(g6);
+	
+	//char* test = "Z{eCKA@_C?iiTISqIUAYPRKPJQATW@iP[spUKse`dWwDi[PJJXCIriGDUyG?";
+	char* g6 = malloc(sizeof(char)*255);
+	FILE* ifile = open_file_r(argv[1]);
+	get_next_line(ifile,g6);
+	int* vals = malloc(sizeof(int)*20);
+	//for (int i = 0; i<9; i++) {
+	//	printf("%d",*(vals+i));
+	//}
+	//printf("ok\n");
+	
+	uint8_t* M = convert_to_Matrix(g6);
+	int num_v = get_num_vertices(g6);
+	int n = find_shared(0,0,M,num_v,vals);
+	for (int i = 0; i<n; i++) {
+		printf("%d\n",*(vals+i));
+	}
+	//print_matrix(M, num_v);
+	uint8_t* M_new = Induced_subgraph(n, vals, M, num_v);
+	print_matrix(M_new,n);
+	//print_matrix(M, num_v);
 	free(M);
-	//free(M_new);
+	free(vals);
+	free(g6);
+	free(M_new);
 	
-	*/
 	
+	/*
 	
 	if (argc<3) {
 		return 0;
@@ -426,6 +436,6 @@ int main( int argc, const char* argv[] )
 			exhaustive_adder(argv[2],NULL);
 		}
 	}
-	
+	*/
 }
 

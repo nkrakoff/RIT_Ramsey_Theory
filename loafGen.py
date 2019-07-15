@@ -1,43 +1,3 @@
-T = [[0,0,0],[1,0,0],[1,1,0]]
-
-L = [[0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,1,0,0,0,0,0],
-[0,0,0,0,0,0,0,0],[0,0,0,0,1,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,1,0]]
-
-C = [[1,0,1,0,1,0,1,0],[0,1,0,1,0,1,0,1],[0,1,0,1,1,0,1,0],
-[1,0,1,0,0,1,0,1],[1,0,0,1,0,1,1,0],[0,1,1,0,1,0,0,1],[0,1,1,0,0,1,1,0],
-[1,0,0,1,1,0,0,1]]
-
-V = [1,1,1,1,1,1,1,1]
-
-S = [
-[0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[1,0,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0],
-[1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1],
-[1,0,0,0,1,0,0,0,0,0,0,1,0,0,1,1,0,0,1,1,0,0,1,1,0,0,1],
-[1,0,0,1,0,0,0,0,0,0,0,0,1,1,0,0,1,1,0,0,1,1,0,0,1,1,0],
-[1,0,0,0,0,0,1,0,0,0,0,1,0,0,1,0,1,1,0,1,0,0,1,0,1,1,0],
-[1,0,0,0,0,1,0,0,0,0,0,0,1,1,0,1,0,0,1,0,1,1,0,1,0,0,1],
-[1,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,0,1,1,0,1,0,0,1,0,1],
-[1,0,0,0,0,0,0,1,0,0,0,0,1,0,1,1,0,1,0,0,1,0,1,1,0,1,0],
-[1,0,0,0,0,0,0,0,0,0,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
-[1,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],
-[0,1,0,1,0,1,0,1,0,1,0,0,1,0,0,0,0,0,0,1,0,0,1,1,0,0,1],
-[0,1,0,0,1,0,1,0,1,0,1,1,0,0,0,0,0,0,0,0,1,1,0,0,1,1,0],
-[0,1,0,0,1,0,1,1,0,1,0,0,0,0,1,0,0,0,0,1,0,0,1,0,1,1,0],
-[0,1,0,1,0,1,0,0,1,0,1,0,0,1,0,0,0,0,0,0,1,1,0,1,0,0,1],
-[0,1,0,1,0,0,1,0,1,1,0,0,0,0,0,0,1,0,0,1,0,1,0,0,1,0,1],
-[0,1,0,0,1,1,0,1,0,0,1,0,0,0,0,1,0,0,0,0,1,0,1,1,0,1,0],
-[0,1,0,0,1,1,0,0,1,1,0,0,0,0,0,0,0,0,1,1,0,1,0,1,0,1,0],
-[0,1,0,1,0,0,1,1,0,0,1,0,0,0,0,0,0,1,0,0,1,0,1,0,1,0,1],
-[0,0,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,0,1,0,0,0,0,0,0],
-[0,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,1,0,0,0,0,0,0,0],
-[0,0,1,0,1,0,1,1,0,1,0,0,1,0,1,1,0,1,0,0,0,0,1,0,0,0,0],
-[0,0,1,1,0,1,0,0,1,0,1,1,0,1,0,0,1,0,1,0,0,1,0,0,0,0,0],
-[0,0,1,1,0,0,1,0,1,1,0,1,0,0,1,0,1,1,0,0,0,0,0,0,1,0,0],
-[0,0,1,0,1,1,0,1,0,0,1,0,1,1,0,1,0,0,1,0,0,0,0,1,0,0,0],
-[0,0,1,0,1,1,0,0,1,1,0,0,1,1,0,0,1,1,0,0,0,0,0,0,0,0,1],
-[0,0,1,1,0,0,1,1,0,0,1,1,0,0,1,1,0,0,1,0,0,0,0,0,0,1,0],
-]
 
 sg = [['011111111110000000000000000'],
 ['101000000001111111100000000'],
@@ -69,16 +29,12 @@ sg = [['011111111110000000000000000'],
 
 
 
-
-
-
-c_five = [
-[0,1,0,0,1],
-[1,0,1,0,0],
-[0,1,0,1,0],
-[0,0,1,0,1],
-[0,0,0,1,0]
-]
+def print_matrix(s):
+    for e in s:
+        for f in e:
+            print(f,end = '')
+        print("")
+    print("")
 
 def to_g6(num_verticies, matrix):
     upper_triangle = ""
@@ -101,42 +57,100 @@ def to_g6(num_verticies, matrix):
             lump = ""
         count = count + 1
     print (g6)
+    return g6
     
 def binaryToDecimal(n): 
     return int(n,2) 
 
-"""
-def transpose(matrix):
-    matrix_t = zip(*matrix)
-    return matrix_t   
 
-def block_Diag(matricies):
-    dim = 0
-    for matrix in matricies:
-        for row in matrix:
-            dim = dim + len(row)
-            
-def link_block_row(matricies):
-
-def link_block_col(matricies):
+def create_sg():
+    s = []
+    for i in range(27):
+        arr = [0] * 27
+        s.append(arr)
+    create_triangle(s)
+    pair_loafs(s)
+    add_loafs(s)
+    connect_loafs(s,3,11)
+    connect_loafs(s,3,19)
+    f = open(sg_pos.txt, "a")
+    #finish_connections(s)
+    to_g6(27,s)
     
-
-def zeros(n,m):
-    row_zeros = [0] * m
-    for i in range(n)
-        matrix_zeros.append(row_zeros)
-    return matrix_zeros
-
-def ones(n,m):
-    row_ones = [1] * m
-    for i in range(n)
-        matrix_ones.append(row_ones)
-    return matrix_ones
     
-def combine_list(first, second):
-    list_a = first + second
-    return list_a
-"""
+    for e in s:
+        for f in e:
+            print(f,end = '')
+        print("")
+        
+    return
+    
+def create_triangle(s):
+    for i in range(3):
+        for j in range(3):
+            if (i!=j):
+                s[i][j] = 1
+
+
+    return 
+
+def pair_loafs(s):
+    for i in range(3,27,2):
+        s[i][i+1]=1
+        s[i+1][i]=1
+ 
+ 
+def add_loafs(s):
+    for i in range(3):
+        for j in range(8):
+            s[i][3+8*i+j] = 1
+            s[3+8*i+j][i] = 1
+
+def connect_loafs(s,k,l):
+    combos = [[1,1,1,1],[0,0,0,0],[1,1,0,0],[0,0,1,1],[1,0,0,1],[0,1,1,0],[1,0,1,0],[0,1,0,1]]
+    connect = []
+    for i in range(8):
+        arr = [0]*8
+        connect.append(arr)
+    
+    for i in range(8):
+        for j in range(4):
+            if combos[i][j] == 1:
+                connect[i][2*j] = 1
+            else:
+                connect[i][2*j+1] = 1
+    
+    for i in range(8):
+        for j in range(8):
+            s[k+i][l+j] = connect[i][j] 
+            s[l+j][k+i] = connect[i][j]
+
+    return
+    
+def finish_connections(s):
+    combos = [[0,1,0,0],[1,0,1,1],[1,0,0,0],[0,1,1,1],[0,0,1,0],[1,1,0,1],[0,0,0,1],[1,1,1,0]]
+    connect = []
+    for i in range(8):
+        arr = [0]*8
+        connect.append(arr)
+    
+    for i in range(8):
+        for j in range(4):
+            if combos[i][j] == 1:
+                connect[i][2*j] = 1
+            else:
+                connect[i][2*j+1] = 1
+                
+    for i in range(8):
+        for j in range(8):
+            s[11+i][19+j] = connect[i][j]
+            s[19+j][11+i] = connect[i][j]
+    return
+    
+def swap(s,i,j):
+    s[i],s[j] = s[j],s[i]
+    for k in range(len(s)):
+       s[k][i], s[k][j] = s[k][j], s[k][i]
     
 sg_real = []
 for i in sg:
@@ -145,4 +159,56 @@ for i in sg:
         arr.append(j)
    sg_real.append(arr)
 
-to_g6(27,sg_real)
+swap(sg_real,12,18)
+swap(sg_real,14,16)
+swap(sg_real,20,26)
+swap(sg_real,22,24)
+
+def insert_vertex(s, i):
+    arr = [0]*len(s)
+    s.insert(i,arr)
+    for e in s:
+        e.insert(i,0)
+        
+
+#insert_vertex(sg_real,27)
+insert_vertex(sg_real,19)
+insert_vertex(sg_real,11)
+
+extra1 = [1,0,0,
+0,0,0,0,0,0,0,0,
+0,
+1,0,1,0,1,0,1,0,
+1,0,1,0,1,0,1,0,
+1]
+
+extra2 = [0,1,0,
+1,0,1,0,1,0,1,0,
+1,
+0,0,0,0,0,0,0,0,
+0,1,0,1,0,1,0,1,
+1]
+
+extra3 = [0,0,1,
+1,0,1,0,1,0,1,0,
+1,
+1,0,1,0,1,0,1,0,
+1,
+0,0,0,0,0,0,0,0,
+0]
+
+for i in range(len(extra1)):
+    sg_real[11][i] = extra1[i]
+    sg_real[i][11] = extra1[i]
+    sg_real[i][20] = extra2[i]
+    sg_real[20][i] = extra2[i]
+    #sg_real[29][i] = extra3[i]
+    #sg_real[i][29] = extra3[i]
+
+
+
+to_g6(29,sg_real)
+print_matrix(sg_real)
+
+
+#create_sg()
